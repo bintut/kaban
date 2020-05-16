@@ -17,10 +17,15 @@ RUN sed -i '${s/$/ contrib non-free/}' /etc/apt/sources.list || exit 1 && \
   -e "s/^data_directory.*$/data_directory = '\/data'/g" \
   /etc/postgresql/12/main/postgresql.conf || exit 1 && \
   rm -f /etc/postgresql/12/main/pg_hba.conf || exit 1 && \
-  wget -q -c -O /etc/postgresql/12/main/pg_hba.conf https://raw.githubusercontent.com/bintut/kaban/master/pg_hba.conf || exit 1 && \
-  sed -i -e "s/PGSQL_CLIENTS/${PGSQL_CLIENTS}/g" -e "s/PGSQL_SERVERS/${PGSQL_SERVERS}/g" /etc/postgresql/12/main/pg_hba.conf || exit 1 && \
-  chown -R postgres:users /etc/postgresql /etc/postgresql-common /usr/lib/postgresql /usr/share/postgresql \
-  /usr/share/postgresql-common /var/lib/postgresql /var/log/postgresql /var/run/postgresql || exit 1 && \
+  wget -q -c -O /etc/postgresql/12/main/pg_hba.conf \
+  https://raw.githubusercontent.com/bintut/kaban/master/pg_hba.conf || exit 1 && \
+  sed -i -e "s/PGSQL_CLIENTS/${PGSQL_CLIENTS}/g" -e "s/PGSQL_SERVERS/${PGSQL_SERVERS}/g" \
+  /etc/postgresql/12/main/pg_hba.conf || exit 1 && \
+  mkdir -p /data || exit 1 && \
+  chmod 0700 /data || exit 1 && \
+  chown -R postgres:users /data /etc/postgresql /etc/postgresql-common /usr/lib/postgresql \
+  /usr/share/postgresql /usr/share/postgresql-common /var/lib/postgresql /var/log/postgresql \
+  /var/run/postgresql || exit 1 && \
   rm -Rf /tmp/* /var/tmp/* || exit 1 && \
   find /var/log/ -type f -exec truncate -s 0 '{}' \;
 USER postgres
